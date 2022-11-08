@@ -1,6 +1,6 @@
 --Create a table named hospital
 create table hospital(
-    hospital_pk text PRIMARY KEY,
+    hospital_pk text PRIMARY KEY, --hospital ID, unique, string 
     hospital_name text NOT NULL,
     city text,
     county text,
@@ -10,6 +10,7 @@ create table hospital(
     fips text,
     lautitude float,
     longitude float,
+    type text,
     ownership text,
     emergency_availability boolean default NULL);
 
