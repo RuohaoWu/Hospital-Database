@@ -1,3 +1,10 @@
+/* 
+Team Blackbirds
+Sam Kalman
+Harry Shao
+Ruohao Wu
+*/
+
 /* The basic entities in our schema are basic information about hospitals,
 weekly medical resources of the hospital, and the quality rating of
 each hospital. */
@@ -6,6 +13,7 @@ each hospital. */
 /* This table contains the basic information for each hospital, table is
 immutable. Nothing in this table should be updated until the hospital
 relocates or changes the owner. */
+
 /* Create a table named hospital */
 CREATE TABLE hospital(
     hospital_pk VARCHAR(255) PRIMARY KEY,
@@ -28,6 +36,7 @@ CREATE TABLE hospital(
 variables on this table will be counted and updated every week for each
 hospital, recording the average number of hospital beds used, the average
 number of ICU beds used, and so on. */
+
 /* Create a table named hospital_weekly */
 CREATE TABLE hospital_weekly(
     ID SERIAL PRIMARY KEY,
@@ -47,6 +56,7 @@ CREATE TABLE hospital_weekly(
 
 /* The third table contains the quality rating of each hospital, this table
 is updated several times a year. */
+
 /* Create a table named quality */
 CREATE TABLE hospital_quality(
     ID SERIAL PRIMARY KEY,
