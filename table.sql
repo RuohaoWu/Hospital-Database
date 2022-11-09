@@ -1,5 +1,14 @@
+/* The basic entities in our schema are basic information about hospitals,
+weekly medical resources of the hospital, and the quality rating of
+each hospital. */
+
+
+/* This table contains the basic information for each hospital, table is
+immutable. Nothing in this table should be updated until the hospital
+relocates or changes the owner. */
+/* Create a table named hospital */
 CREATE TABLE hospital(
-    hospital_pk VARCHAR(255) PRIMARY KEY, --hospital ID, unique, string 
+    hospital_pk VARCHAR(255) PRIMARY KEY,
     hospital_name VARCHAR(255) NOT NULL,
     city VARCHAR(100),
     county VARCHAR(50),
@@ -14,7 +23,12 @@ CREATE TABLE hospital(
     emergency_avail boolean
 );
 
--- Create a table named hospital_weekly
+
+/* This table contains the weekly medical resources of the hospital, the
+variables on this table will be counted and updated every week for each
+hospital, recording the average number of hospital beds used, the average
+number of ICU beds used, and so on. */
+/* Create a table named hospital_weekly */
 CREATE TABLE hospital_weekly(
     ID SERIAL PRIMARY KEY,
     hospital_pk VARCHAR(255),
@@ -31,7 +45,9 @@ CREATE TABLE hospital_weekly(
         REFERENCES hospital (hospital_pk) MATCH FULL
  );
 
--- Create a table named quality
+/* The third table contains the quality rating of each hospital, this table
+is updated several times a year. */
+/* Create a table named quality */
 CREATE TABLE hospital_quality(
     ID SERIAL PRIMARY KEY,
     hospital_pk VARCHAR(255),
@@ -40,3 +56,14 @@ CREATE TABLE hospital_quality(
     FOREIGN KEY (hospital_pk)
         REFERENCES hospital (hospital_pk) MATCH FULL
  );
+
+ /* As comments show, we created all three tables based on the updating rate of
+variables. Variables with the same update rate are placed in the same table. */
+
+/* The table does not have any redundant variables, because we create the table
+through the update rate of the variable, and the variables with the same update
+rate are placed in the same table. The only variable that overlaps in the three
+tables is 'hospital_pk', the 'hospital_pk' of the second and third tables are
+the reference of the first table. Without 'hospital_pk', we cannot join these
+three tables. Hence, although 'hospital_pk' is present in all three tables, it
+is not redundant.
