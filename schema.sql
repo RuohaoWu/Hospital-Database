@@ -61,7 +61,7 @@ is updated several times a year. */
 CREATE TABLE hospital_quality(
     ID SERIAL PRIMARY KEY,
     hospital_pk VARCHAR(255),
-    quality integer,
+    quality numeric,
     date DATE NOT NULL,
     FOREIGN KEY (hospital_pk)
         REFERENCES hospital (hospital_pk) MATCH FULL
