@@ -51,9 +51,12 @@ with conn.transaction():
                             "values (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
                             (hospital_pk, name, city, state, address, zip,
                              fips, longitude, latitude))
-        except Exception:
+        except Exception as e:
             # Here we need to catch exception and do something
-            pass
+            print(e)
+            # if e == 'duplicate key value violates unique constraint \
+            #          "hospital_pkey"':
+            #     print("")
         # Below is for hospital_weekly
         date = row.collection_week
         # If hopital_beds < 0, then we convert it into NA
