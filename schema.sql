@@ -24,8 +24,8 @@ CREATE TABLE hospital(
     address VARCHAR(100),
     zip VARCHAR(10),
     fips VARCHAR(20),
-    lautitude numeric,
     longitude numeric,
+    latitude numeric,
     type VARCHAR(50),
     ownership VARCHAR(50),
     emergency_avail boolean
