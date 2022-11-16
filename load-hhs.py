@@ -51,12 +51,9 @@ with conn.transaction():
                             "values (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
                             (hospital_pk, name, city, state, address, zip,
                              fips, longitude, latitude))
-        except Exception as e:
+        except psycopg.errors.UniqueViolation:
             # Here we need to catch exception and do something
-            print(e)
-            # if e == 'duplicate key value violates unique constraint \
-            #          "hospital_pkey"':
-            #     print("")
+            pass
         # Below is for hospital_weekly
         date = row.collection_week
         # If hopital_beds < 0, then we convert it into NA
@@ -98,10 +95,9 @@ with conn.transaction():
                              child_bed_avail, adult_bed_used, child_bed_used,
                              all_icu_bed_avail, all_icu_bed_used,
                              all_COVID_patient, adult_icu_COVID_patient))
-        except Exception:
+        except Exception as e:
             # Catch exception and do some operation when we catch it
-            print("Error")
-            break
+            print("Exception is", e)
 
 
 conn.commit()  # Commit what we did above if it runs

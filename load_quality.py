@@ -21,9 +21,9 @@ with conn.transaction():
         # row._1 means the first column of the csv file
         hospital_pk = row._1
         hospital_name = row._2
-        address = row._3
-        city = row._4
-        state = row._5
+        address = row.Address
+        city = row.City
+        state = row.State
         zip = row._6
         county = row._7
         type = row._9
@@ -61,7 +61,7 @@ with conn.transaction():
                             (hospital_pk, hospital_name, city,
                              county, state, address, zip, type,
                              ownership, emergency_avail))
-        except Exception:
+        except psycopg.errors.UniqueViolation:
             # If we catch the exception, we do other operation
             # If the hospital is already in the hospital table
             # Update more information from quality csv
@@ -73,9 +73,9 @@ with conn.transaction():
                             where hospital_pk = %s ", (county, type, ownership,
                                                        emergency_avail,
                                                        hospital_pk))
-                except Exception:
+                except Exception as e:
                     # If we catch exception, we do other operation
-                    print("Error")
+                    print("Exception is", e)
         try:
             # Insert data into hospital_quality table
             with conn.transaction():
@@ -85,8 +85,8 @@ with conn.transaction():
                     quality) "
                             "values (%s, %s, %s)", (hospital_pk, date,
                                                     quality))
-        except Exception:
+        except Exception as e:
             # Need to do some operation when we catch an exception
-            print("This is an error")
+            print("Exception is", e)
 conn.commit()  # Commit what we did above if it runs
 conn.close()  # Close the cursor
