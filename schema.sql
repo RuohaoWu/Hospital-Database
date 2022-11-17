@@ -59,10 +59,10 @@ is updated several times a year. */
 
 /* Create a table named quality */
 CREATE TABLE hospital_quality(
-    ID SERIAL PRIMARY KEY,
     hospital_pk VARCHAR(255),
     quality numeric,
     date DATE NOT NULL,
+    PRIMARY KEY (hospital_pk, date),
     FOREIGN KEY (hospital_pk)
         REFERENCES hospital (hospital_pk) MATCH FULL
  );
