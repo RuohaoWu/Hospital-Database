@@ -18,17 +18,17 @@ relocates or changes the owner. */
 CREATE TABLE hospital(
     hospital_pk VARCHAR(255) PRIMARY KEY,
     hospital_name VARCHAR(255) NOT NULL,
-    city VARCHAR(100),
-    county VARCHAR(50),
-    state CHAR(2),
-    address VARCHAR(100),
-    zip VARCHAR(10),
-    fips VARCHAR(20),
-    longitude numeric,
-    latitude numeric,
-    type VARCHAR(50),
-    ownership VARCHAR(50),
-    emergency_avail boolean
+    city VARCHAR(100) Default NULL,
+    county VARCHAR(50) Default NULL,
+    state CHAR(2) Default NULL,
+    address VARCHAR(100) Default NULL,
+    zip VARCHAR(10) Default NULL,
+    fips VARCHAR(20) Default NULL,
+    longitude numeric Default NULL,
+    latitude numeric Default NULL,
+    type VARCHAR(50) Default NULL,
+    ownership VARCHAR(50) Default NULL,
+    emergency_avail boolean Default NULL
 );
 
 
