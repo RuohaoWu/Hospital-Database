@@ -29,10 +29,22 @@ data = pd.read_csv(sys.argv[1], usecols=["hospital_pk", "hospital_name" ,"city",
                                         "staffed_icu_adult_patients_confirmed_covid_7_day_avg"],
                                 dtype = {"hospital_pk":str})
 
+#data.replace(-999999, None)
 
-data.fillna('NULL')
+error_df = pd.DataFrame(columns=["hospital_pk", "hospital_name" ,"city",  "state", "address", "zip",
+                                        "fips_code", "geocoded_hospital_address", "collection_week", 
+                                        "all_adult_hospital_beds_7_day_avg", "all_pediatric_inpatient_beds_7_day_avg",
+                                        "all_adult_hospital_inpatient_bed_occupied_7_day_coverage",
+                                        "all_pediatric_inpatient_bed_occupied_7_day_avg",
+                                        "all_adult_hospital_inpatient_bed_occupied_7_day_coverage",
+                                        "all_pediatric_inpatient_bed_occupied_7_day_avg",
+                                        "total_icu_beds_7_day_avg", "icu_beds_used_7_day_avg",
+                                        "inpatient_beds_used_covid_7_day_avg",
+                                        "staffed_icu_adult_patients_confirmed_covid_7_day_avg"])
 
-### Set Data Types                                     
+exception_df = pd.DataFrame(columns=["Exception"])
+
+### Set Data Types
 ### Replace -99999 values to NaN
 ### Error with NaN values
 
@@ -42,6 +54,8 @@ d = pd.read_sql_query("SELECT hospital_pk from hospital;", conn)
 new_hospital = 0
 updated_hospital = 0
 
+error_pk = []
+
 # Ensure multiple queries run automically (either all succeed or all fail)
 with conn.transaction():
     for indx, row in data.iterrows():
@@ -50,7 +64,6 @@ with conn.transaction():
         insert = False
         # Scan through every row in the csv and make it as tuple
         hospital_pk = row["hospital_pk"]
-        print(hospital_pk)
         name = row["hospital_name"]
         city = row["city"]
         state = row["state"]
@@ -87,23 +100,23 @@ with conn.transaction():
             with conn.transaction():
                 # Make a savepoint
                 if (d["hospital_pk"] == hospital_pk).any():
-            
+
                     cur.execute("update hospital set fips = %s, longitude = %s, latitude = %s\
-                        where hospital_pk = %s ", (fips, longitude, latitude, hospital_pk))
-                    
-                    
+                        where hospital_pk = %s ", (fips, longitude, latitude,
+                                                   hospital_pk))
+
                     update = True
                 else:
 
                     cur.execute("insert into hospital(hospital_pk, hospital_name, \
-                                city, state, address, zip, fips, longitude, latitude) "
+                                city, state, address, zip, fips, longitude, \
+                                    latitude) "
                                 "values (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
                                 (hospital_pk, name, city, state, address, zip,
-                                fips, longitude, latitude))
+                                 fips, longitude, latitude))
 
                     insert = True
 
-                
                 cur.execute("insert into hospital_weekly(hospital_pk, date, \
                     adult_bed_avail, child_bed_avail, adult_bed_used, \
                         child_bed_used, all_icu_bed_avail, all_icu_bed_used, \
@@ -114,20 +127,23 @@ with conn.transaction():
                              all_icu_bed_avail, all_icu_bed_used,
                              all_COVID_patient, adult_icu_COVID_patient))
 
-        except Exception as e :
-            print(e)
-            #data[index:]
-        
+        except Exception as e:
+            error_pk.append(hospital_pk)
+            #exception_df = pd.concat([exception_df, pd.DataFrame(type(e))])
+            error_df = pd.concat([error_df, data[indx:indx+1]], ignore_index=True)
+            #new_file = pd.concat([error_df, exception_df])
+
         else:
-            print("Yes")
-            if update == True:
+            if update is True:
                 new_hospital += 1
             else:
                 updated_hospital += 1
 
-            
 
 conn.commit()
 conn.close()
 
-print(new_hospital, updated_hospital)
+
+# new_df = data["hospital_pk" in error_df]
+# new_df
+error_df.to_csv("fail_insert_hhs.csv", index=False)
