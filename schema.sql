@@ -42,14 +42,14 @@ CREATE TABLE hospital_weekly(
     ID SERIAL PRIMARY KEY,
     hospital_pk VARCHAR(255),
     date DATE NOT NULL CHECK (date <= now()),
-    adult_bed_avail numeric,
-    child_bed_avail numeric,
-    adult_bed_used numeric,
-    child_bed_used numeric,
-    all_ICU_bed_avail numeric,
-    all_ICU_bed_used numeric,
-    all_COVID_patient numeric,
-    adult_ICU_COVID_patient numeric,
+    adult_bed_avail numeric CHECK (adult_bed_avail >= 0),
+    child_bed_avail numeric CHECK (child_bed_avail >= 0),
+    adult_bed_used numeric CHECK (adult_bed_used >= 0),
+    child_bed_used numeric CHECK (child_bed_used >= 0),
+    all_ICU_bed_avail numeric CHECK (all_ICU_bed_avail >= 0),
+    all_ICU_bed_used numeric CHECK (all_ICU_bed_used >= 0),
+    all_COVID_patient numeric CHECK (all_COVID_patient >= 0),
+    adult_ICU_COVID_patient numeric CHECK (adult_ICU_COVID_patient >= 0),
     FOREIGN KEY (hospital_pk)
         REFERENCES hospital (hospital_pk) MATCH FULL
  );
