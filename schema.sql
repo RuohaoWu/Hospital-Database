@@ -39,7 +39,6 @@ number of ICU beds used, and so on. */
 
 /* Create a table named hospital_weekly */
 CREATE TABLE hospital_weekly(
-    ID SERIAL PRIMARY KEY,
     hospital_pk VARCHAR(255),
     date DATE NOT NULL CHECK (date <= now()),
     adult_bed_avail numeric CHECK (adult_bed_avail >= 0),
@@ -50,6 +49,7 @@ CREATE TABLE hospital_weekly(
     all_ICU_bed_used numeric CHECK (all_ICU_bed_used >= 0),
     all_COVID_patient numeric CHECK (all_COVID_patient >= 0),
     adult_ICU_COVID_patient numeric CHECK (adult_ICU_COVID_patient >= 0),
+    PRIMARY KEY (hospital_pk, date),
     FOREIGN KEY (hospital_pk)
         REFERENCES hospital (hospital_pk) MATCH FULL
  );
