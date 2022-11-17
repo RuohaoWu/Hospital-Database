@@ -6,6 +6,7 @@ import psycopg
 import credencials
 import pandas as pd
 import sys
+import numpy as np
 
 
 conn = psycopg  .connect(
@@ -44,6 +45,8 @@ data = pd.read_csv(sys.argv[1], usecols=["hospital_pk", "hospital_name" ,"city",
 data = data.replace(-999999, None)
 data = data.replace('NULL', None)
 data = data.replace('', None)
+data = data.replace('NaN', None)
+data = data.replace(np.NaN, None)
 
 exception_df = pd.DataFrame(columns=["Exception"])
 
