@@ -14,15 +14,19 @@ conn = psycopg  .connect(
 cur = conn.cursor()
 
 # Read the file into python
-quality_data = pd.read_csv(sys.argv[2], usecols=["Facility ID", "Facility Name", "Address", "City", "State", "ZIP Code",
-                                        "County Name", "Hospital Type", "Hospital Ownership", 
-                                        "Emergency Services", "Hospital overall rating"],
-                                dtype = {
-                                    "Facility ID":str, 
-                                "Facility Name":str, "Address":str,"City":str, "State":str,"ZIP Code": str, 
-                                        "County Name":str, "Hospital Type":str,
-                                        "Hospital Ownership":str,
-                                        "Emergency Services":str, "Hospital overall rating":str})
+quality_data = pd.read_csv(sys.argv[2],
+                           usecols=["Facility ID", "Facility Name", "Address",
+                                    "City", "State", "ZIP Code",
+                                    "County Name", "Hospital Type",
+                                    "Hospital Ownership",
+                                    "Emergency Services",
+                                    "Hospital overall rating"],
+                           dtype={
+                                    "Facility ID": str, 
+                                "Facility Name": str, "Address": str,"City": str, "State": str,"ZIP Code": str,
+                                        "County Name": str, "Hospital Type": str,
+                                        "Hospital Ownership": str,
+                                        "Emergency Services": str, "Hospital overall rating": str})
 
 quality_data = quality_data.replace("Not Available", None)
 quality_data = quality_data.replace('NULL', None)
