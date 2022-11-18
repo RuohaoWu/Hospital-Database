@@ -1,5 +1,6 @@
 """Run functions that updates the hospital database"""
 
+# Import necessary packages
 import load_quality_functions as f
 import sys
 

@@ -138,27 +138,35 @@ def insert_data(quality_data, d, conn, cur, date_sys):
             # we capture it and save the rows in a csv file
 
             except Exception as e:
+                # Append the row index when the row fail to insert or update
                 error_indx.append(indx)
+                # Append the error information when there is an exception
                 error.append(str(e))
+                # The rows that fail to insert adds one more
                 rows_failed += 1
+                # Print out the index of the row fail to insert
 
                 message = "Row Number: " + str(indx) + " failed to insert."
                 print(message)
                 print(str(e))
-
+            # if insert change from false to true
+            # It means we insert one more hospital into hospital table
+            # If it does not, it means we update one more hospital
             else:
                 if insert is True:
                     new_hospital += 1
 
                 rows_updated += 1
-
+    # Commit what we did above and close the sql connnection
     conn.commit()
     conn.close()
-
+    # Make a subdataframe to obtain rows which fail to insert or update
     error_df = quality_data.loc[quality_data.index[error_indx]]
-
+    # Add a column into error_df which is the exception we capture for
+    # each row that fail to insert or update
     error_df["Exception"] = error
-
+    # Turn the dataframe into a csv where user can see the information about
+    # the failed insertation row and what error occurs
     error_df.to_csv("failed_insert_HGI_Quality.csv", index=False)
 
     return rows_updated, new_hospital, rows_failed
@@ -167,7 +175,9 @@ def insert_data(quality_data, d, conn, cur, date_sys):
 def display_results(rows_updated, new_hospital, rows_failed):
     """Display a summary of the updates to the database"""
 
-    # Summary
+    # Summary of  how many rows added to table hospital_quality
+    # How many new hospital it insert into hospital table
+    # How many rows that fail to insert
     summary1 = "Rows added to hospital_quality: " + str(rows_updated)
     summary2 = "New hospitals found: " + str(new_hospital)
     summary3 = "Rows that failed to insert " + str(rows_failed)
