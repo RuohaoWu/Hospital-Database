@@ -5,7 +5,6 @@
 import psycopg
 import credencials
 import pandas as pd
-import sys
 import numpy as np
 
 
@@ -25,43 +24,43 @@ def read_data(datafile):
     # It will make the script read the data faster
     # and we have control of the data type
 
-    data = pd.read_csv(datafile,
-                    usecols=[
-                        "hospital_pk", "hospital_name",
-                        "city",  "state", "address", "zip",
-                        "fips_code",
-                        "geocoded_hospital_address",
-                        "collection_week",
-                        "all_adult_hospital_beds_7_day_avg",
-                        "all_pediatric_inpatient_beds_7_day_avg",
-                        "all_adult_hospital_inpatient_bed_occupied_7_day_coverage",
-                        "all_pediatric_inpatient_bed_occupied_7_day_avg",
-                        "all_adult_hospital_inpatient_bed_occupied_7_day_coverage",
-                        "all_pediatric_inpatient_bed_occupied_7_day_avg",
-                        "total_icu_beds_7_day_avg",
-                        "icu_beds_used_7_day_avg",
-                        "inpatient_beds_used_covid_7_day_avg",
-                        "staffed_icu_adult_patients_confirmed_covid_7_day_avg"],
-                    dtype={"hospital_pk": str, "hospital_name": str,
-                            "city": str, "state": str,
-                            "address": str, "zip": str,
-                            "geocoded_hospital_address": str,
-                            "collection_week": str,
-                            "all_adult_hospital_beds_7_day_avg": float,
-                            "all_pediatric_inpatient_beds_7_day_avg": float,
-                            "all_adult_hospital_inpatient_bed_\
-                            occupied_7_day_coverage": float,
-                            "all_pediatric_inpatient_bed_occupied_7_\
-                            day_avg": float,
-                            "all_adult_hospital_inpatient_bed_occupied\
-                            _7_day_coverage": float,
-                            "all_pediatric_inpatient_bed_occupied_7_day\
-                            _avg": float,
-                            "total_icu_beds_7_day_avg": float,
-                            "icu_beds_used_7_day_avg": float,
-                            "inpatient_beds_used_covid_7_day_avg": float,
-                            "staffed_icu_adult_patients_confirmed_\
-                            covid_7_day_avg": float})
+    data = pd.read_csv(
+        datafile, usecols=[
+         "hospital_pk", "hospital_name",
+         "city",  "state", "address", "zip",
+         "fips_code",
+         "geocoded_hospital_address",
+         "collection_week",
+         "all_adult_hospital_beds_7_day_avg",
+         "all_pediatric_inpatient_beds_7_day_avg",
+         "all_adult_hospital_inpatient_bed_occupied_7_day_coverage",
+         "all_pediatric_inpatient_bed_occupied_7_day_avg",
+         "all_adult_hospital_inpatient_bed_occupied_7_day_coverage",
+         "all_pediatric_inpatient_bed_occupied_7_day_avg",
+         "total_icu_beds_7_day_avg",
+         "icu_beds_used_7_day_avg",
+         "inpatient_beds_used_covid_7_day_avg",
+         "staffed_icu_adult_patients_confirmed_covid_7_day_avg"],
+        dtype={"hospital_pk": str, "hospital_name": str,
+               "city": str, "state": str,
+               "address": str, "zip": str,
+               "geocoded_hospital_address": str,
+               "collection_week": str,
+               "all_adult_hospital_beds_7_day_avg": float,
+               "all_pediatric_inpatient_beds_7_day_avg": float,
+               "all_adult_hospital_inpatient_bed_\
+               occupied_7_day_coverage": float,
+               "all_pediatric_inpatient_bed_occupied_7_\
+               day_avg": float,
+               "all_adult_hospital_inpatient_bed_occupied\
+               _7_day_coverage": float,
+               "all_pediatric_inpatient_bed_occupied_7_day\
+               _avg": float,
+               "total_icu_beds_7_day_avg": float,
+               "icu_beds_used_7_day_avg": float,
+               "inpatient_beds_used_covid_7_day_avg": float,
+               "staffed_icu_adult_patients_confirmed_\
+               covid_7_day_avg": float})
 
     # Converting -999999, NULL, empty string, NaN, and np.NaN value in the csv
     # Into NULL that SQL regongnized so that it wouldn't cause confusion
@@ -135,33 +134,39 @@ def insert_data(data, d, conn, cur):
                     # Make a savepoint
                     if (d["hospital_pk"] == hospital_pk).any():
                         # If the hospital pk was already in the table,
-                        # we update information we are missing from quality table
+                        # we update information we are missing
+                        # from quality table
                         cur.execute("update hospital set fips = %s, longitude = %s, latitude = %s\
-                            where hospital_pk = %s ", (fips, longitude, latitude,
-                                                    hospital_pk))
+                            where hospital_pk = %s ", (fips, longitude,
+                                                       latitude, hospital_pk))
 
                     else:
                         # If the hospital pk was not in the table,
                         # We should insert into the hospital table
                         cur.execute("insert into hospital(hospital_pk, hospital_name, \
-                                    city, state, address, zip, fips, longitude, \
+                                    city, state, address, zip, fips, \
+                                        longitude, \
                                         latitude) "
-                                    "values (%s, %s, %s, %s, %s, %s, %s, %s, %s)",
-                                    (hospital_pk, name, city, state, address, zip,
-                                    fips, longitude, latitude))
+                                    "values (%s, %s, %s, %s, %s, %s, %s, %s, \
+                                         %s)",
+                                    (hospital_pk, name, city, state, address,
+                                     zip, fips, longitude, latitude))
                         # When the insert works, turn insert variable into true
                         insert = True
                     # Regardless of update and insert works,
                     # we should always insert information in hospital_weekly
                     cur.execute("insert into hospital_weekly(hospital_pk, date, \
                         adult_bed_avail, child_bed_avail, adult_bed_used, \
-                            child_bed_used, all_icu_bed_avail, all_icu_bed_used, \
+                            child_bed_used, all_icu_bed_avail, \
+                                all_icu_bed_used, \
                                 all_COVID_patient, adult_icu_COVID_patient) "
-                                "values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+                                "values (%s, %s, %s, %s, %s, %s, %s, %s, %s, \
+                                     %s)",
                                 (hospital_pk, date, adult_bed_avail,
-                                child_bed_avail, adult_bed_used, child_bed_used,
-                                all_icu_bed_avail, all_icu_bed_used,
-                                all_COVID_patient, adult_icu_COVID_patient))
+                                 child_bed_avail, adult_bed_used,
+                                 child_bed_used,
+                                 all_icu_bed_avail, all_icu_bed_used,
+                                 all_COVID_patient, adult_icu_COVID_patient))
             # If there is an exception,
             # we capture it and save the rows in a csv file
             except Exception as e:
@@ -192,8 +197,8 @@ def insert_data(data, d, conn, cur):
     # Add a column into error_df which is the exception we capture for
     # each row that fail to insert or update
     error_df["Exception"] = error
-    # Turn the dataframe into a csv where user can see the information about the
-    # failed insertation row and what error occurs
+    # Turn the dataframe into a csv where user can see the information about
+    # the failed insertation row and what error occurs
     error_df.to_csv("failed_insert_hhs.csv", index=False)
 
     return rows_updated, new_hospital, rows_failed
